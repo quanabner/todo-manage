@@ -38,7 +38,7 @@ const route = useRoute();
           </a-menu-item>
           <a-menu-item key="2">
             <video-camera-outlined />
-            <router-link to="/plan">计划</router-link>
+            <router-link to="/plan">计划管理</router-link>
           </a-menu-item>
         </a-menu>
       </a-layout-sider>
