@@ -1,9 +1,20 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed,onMounted } from "vue";
 import { DownOutlined, PlusCircleOutlined, SmileOutlined, SyncOutlined, LoadingOutlined } from "@ant-design/icons-vue";
 import TodoItem from "@/components/plan/TodoItem.vue";
 import draggable from "vuedraggable";
 import { unStartSortList, processingSortList, completedSortList } from "@/const/map.js";
+import eventBus from "@/utils/eventBus";
+
+onMounted(() => {
+// 订阅事件
+eventBus.on("custom-event2", (data) => {
+  console.log("Component B received event data:", data);
+});
+});
+
+// 发布事件
+const addPlan = () => eventBus.emit("custom-event1", "Hello from Component B");
 
 const notStartList = ref([
   {
@@ -125,7 +136,7 @@ const completedSortMap = computed(() => {
               <template #split>
                 <a-divider type="vertical" />
               </template>
-              <div class="plus">
+              <div class="plus" @click="addPlan">
                 <PlusCircleOutlined />
                 新增计划
               </div>

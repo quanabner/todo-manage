@@ -1,6 +1,25 @@
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted, onUnmounted } from "vue";
 import { DeleteOutlined, MoreOutlined, SmileOutlined, SyncOutlined, LoadingOutlined } from "@ant-design/icons-vue";
+import eventBus from "@/utils/eventBus";
+
+const callback = (data) => {
+  console.log("Component A received event data:", data);
+};
+
+onMounted(() => {
+  // 订阅事件
+  eventBus.on("custom-event1", callback);
+});
+onUnmounted(() => {
+  // 取消订阅事件
+  eventBus.off("custom-event1", callback);
+})
+// 发布事件
+function handleMenuClick() {
+  console.log('sasasasa')
+  eventBus.emit("custom-event2", "Hello from Component TodoItem")
+}
 
 const props = defineProps({
   todoItem: {
