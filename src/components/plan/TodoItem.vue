@@ -64,7 +64,7 @@ const showPrevStep = computed(() => {
 
 <template>
   <div :class="ItemClass">
-    <div class="content">{{ props.todoItem.name }}</div>
+    <div class="content">{{ props.todoItem.content }}</div>
     <a-dropdown placement="bottom">
       <MoreOutlined style="font-size: 24px" />
       <template #overlay>

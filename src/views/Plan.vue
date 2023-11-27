@@ -1,87 +1,62 @@
 <script setup>
-import { ref, computed,onMounted } from "vue";
+import { ref, computed, onMounted, reactive } from "vue";
 import { DownOutlined, PlusCircleOutlined, SmileOutlined, SyncOutlined, LoadingOutlined } from "@ant-design/icons-vue";
 import TodoItem from "@/components/plan/TodoItem.vue";
 import draggable from "vuedraggable";
 import { unStartSortList, processingSortList, completedSortList } from "@/const/map.js";
 import eventBus from "@/utils/eventBus";
 
-onMounted(() => {
-// 订阅事件
-eventBus.on("custom-event2", (data) => {
-  console.log("Component B received event data:", data);
-});
+let list = ref([]);
+
+onMounted(async () => {
+  // 订阅事件
+  eventBus.on("custom-event2", (data) => {
+    console.log("Component B received event data:", data);
+  });
+  const response = await fetch("https://abner.club/api/items");
+  const res = await response.json();
+  if (res.code === 200) {
+    list.value = res.data
+  }
+
+  // fetch("https://abner.club/api/insert-item", {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify({
+  //     type: 3,
+  //     create_time: "2023-11-27 11:11:00",
+  //     complete_time: null,
+  //     start_time: null,
+  //     status: 0,
+  //     delete_time: null,
+  //     is_delete: 0,
+  //     content: "测试接口",
+  //   }),
+  // });
 });
 
 // 发布事件
 const addPlan = () => eventBus.emit("custom-event1", "Hello from Component B");
 
-const notStartList = ref([
-  {
-    id: 1,
-    name: "11111",
-    status: 0,
-  },
-  {
-    id: 2,
-    name: "22222",
-    status: 0,
-  },
-  {
-    id: 3,
-    name: "33333",
-    status: 0,
-  },
-  {
-    id: 4,
-    name: "44444",
-    status: 0,
-  },
-]);
-const processingList = ref([
-  {
-    id: 1,
-    name: "11111",
-    status: 1,
-  },
-  {
-    id: 2,
-    name: "22222",
-    status: 1,
-  },
-  {
-    id: 3,
-    name: "33333",
-    status: 1,
-  },
-  {
-    id: 4,
-    name: "44444",
-    status: 1,
-  },
-]);
-const completedList = ref([
-  {
-    id: 1,
-    name: "11111",
-    status: 2,
-  },
-  {
-    id: 2,
-    name: "22222",
-    status: 2,
-  },
-  {
-    id: 3,
-    name: "33333",
-    status: 2,
-  },
-  {
-    id: 4,
-    name: "44444",
-    status: 2,
-  },
-]);
+const notStartList = computed(() => {
+  return list.value.filter((item) => {
+    return item.status == 0;
+  });
+});
+
+const processingList = computed(() => {
+  return list.value.filter((item) => {
+    return item.status === 1;
+  });
+});
+
+const completedList = computed(() => {
+  return list.value.filter((item) => {
+    return item.status === 2;
+  });
+});
 
 const drag = ref(false);
 
@@ -155,6 +130,7 @@ const completedSortMap = computed(() => {
               </a-dropdown>
             </a-space>
           </template>
+          {{ message }}
           <draggable v-model="notStartList" group="todo" @start="drag = true" @end="drag = false" itemKey="id">
             <template #item="{ element }">
               <TodoItem :todoItem="element"></TodoItem>
